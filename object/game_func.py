@@ -1,7 +1,7 @@
 import json
 
 
-def input_validate(type_input: str) -> str | int:
+def input_validate(type_input: str) -> str|int:
     """ Функция приглашает пользователя к вводу данных, проверяет 
       корректность введенных данных.
       type_input = menu - выводит приглашение для ввода пункта меню
@@ -21,12 +21,14 @@ def input_validate(type_input: str) -> str | int:
 
         # приглашаем пользователя к вводу данных
         input_num = input(f'{answer_dict.get(type_input)}')
+        print()
 
         if input_num.isdigit():
             if type_input == 'menu':
                 return input_num  # для menu вернем str
             else:
                 return int(input_num)  # иначе int
+
 
         print('Ошибка ввода, введите число')
         print()

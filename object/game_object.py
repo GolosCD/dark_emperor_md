@@ -1,4 +1,6 @@
-"""Модуль хранит классы для игры
+from object.game_text import *
+
+"""Модуль хранит независимые классы для игры
 Классы содержат методы в основном они делятся на три категории:
  get_ - методы что-то возращают;
  set_ - методы что-то меняют;
@@ -78,8 +80,9 @@ class Informer:
   """Класс хранит реакции на различные игровые события"""
 
   def no_gold(self):
-    print('Need more gold')
-    input('Нажмите Enter для продолжения')
+    print('Need more gold','\n')
+    input('Нажмите Enter для продолжения...')
+    print()
 
 
 # Принтер - печатает разные вещи
@@ -94,3 +97,17 @@ class Printer:
 
     for num, name_line in self.menu_objects.get(name).items():
       print(f'{num} - {name_line}')
+    print()
+
+  def welcome(self):
+    """Метод печатает приветственное сообщение"""
+    print(welcome,'\n')
+    input('Нажмите Enter для продолжения')
+    print()
+
+  def incorrect_key(self):
+    """Метод печатается когда пользователь вбил несуществующий номер раздела меню"""
+    
+    print('Введите корректный пункт меню','\n')
+    input('Нажмите Enter для продолжения')
+    print()
