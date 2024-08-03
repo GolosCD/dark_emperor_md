@@ -1,4 +1,4 @@
-from game_engine import ControlManager 
+from game_engine import ControlManager
 
 #Запуск игры
 if __name__ == '__main__':

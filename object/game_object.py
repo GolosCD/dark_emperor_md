@@ -71,3 +71,26 @@ class Treasury:
     """Метод списывает указанную сумму из казны королевства"""
     
     self.__gold -= price
+
+
+# Информер
+class Informer:  
+  """Класс хранит реакции на различные игровые события"""
+
+  def no_gold(self):
+    print('Need more gold')
+    input('Нажмите Enter для продолжения')
+
+
+# Принтер - печатает разные вещи
+class Printer:
+  """Класс для печати игровых меню и текста"""
+  
+  def __init__(self, json_menu: dict):
+    self.menu_objects = json_menu
+
+  def menu(self, name: str):
+    """Метод печатает меню"""
+
+    for num, name_line in self.menu_objects.get(name).items():
+      print(f'{num} - {name_line}')

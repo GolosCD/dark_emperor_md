@@ -13,23 +13,10 @@ blacksmith = ConstructionObject('blacksmith', *param['blacksmith'].values())
 castl = ConstructionObject('castl', *param['castl'].values())
 #Казна
 treasury = Treasury(param.get('kingdom').get('gold'))
-
-
-########_Printer_##############################################################################
-class Printer:
-  """Класс для печати разделов меню"""
-
-  menu_objects = json_loader('object/menu.json')  # загружаем меню из json
-
-  @classmethod
-  def menu(cls, name: str):
-    """Метод печатает меню"""
-
-    for num, name_line in cls.menu_objects.get(name).items():
-      print(f'{num} - {name_line}')
-
-
-#############################################################################################
+# Уведомлялка
+info = Informer()
+# Принтер
+printer = Printer(json_loader('object/menu.json'))
 
 
 class ControlManager:
@@ -37,7 +24,7 @@ class ControlManager:
   @classmethod
   def print_main_menu(cls):  # и печать основного меню и начало игры
 
-    Printer.menu('main')
+    printer.menu('main')
 
     num = input_validate('menu')
 
@@ -50,7 +37,7 @@ class ControlManager:
   @classmethod
   def print_build_menu(cls):
 
-    Printer.menu('build')
+    printer.menu('build')
 
     num = input_validate('menu')
 
@@ -62,19 +49,7 @@ class ControlManager:
 
   @classmethod
   def print_trade_menu(cls):
-    Printer.menu('trade')
-
-
-########_Informer_###########################################################################
-class Informer:  # Информер
-
-  @classmethod
-  def no_gold(cls):
-    print('Need more gold')
-    input('Нажмите Enter для продолжения')
-
-
-#############################################################################################
+    printer.menu('trade')
 
 
 class Builder:
@@ -94,8 +69,7 @@ class Builder:
     # Считаем общую стоимость требуемых построек
     total_price = obj.get_current_price() * qty_farm
 
-    if total_price <= treasury.get_current_gold(
-    ):  # если деняк в казне хватает
+    if total_price <= treasury.get_current_gold():  # если деняк в казне хватает
 
       # то увеличиваем кол-во ферм
       farm.add_count_build(qty_farm)
@@ -109,7 +83,7 @@ class Builder:
 
     else:
       # Уведомление, что нехватает денег
-      Informer.no_gold()
+      info.no_gold()
       #Printer.menu('build')
       ControlManager.print_build_menu()
 
