@@ -111,7 +111,7 @@ class Builder:
     if build_count_price_float<=Treasury.current_gold():# если деняк в казне хватает
 
       # то увеличиваем кол-во ферм
-      cls.chang_count_build(build_name,qty_farm,'+')
+      cls.change_count_build(build_name,qty_farm,'+')
 
       # списываем деньги за успешное строительство фермы
       Treasury.write_off_gold(build_count_price_float)
@@ -122,7 +122,8 @@ class Builder:
     else:
       # Уведомление, что нехватает денег
       Informer.no_gold()
-      Printer.menu_cls('build')
+      #Printer.menu_cls('build')
+      ControlManager.print_build_menu()
       
 
   @classmethod
@@ -131,7 +132,7 @@ class Builder:
     return float(qty) * param.get(build_name).get('price_float')
 
   @classmethod
-  def chang_count_build(cls,build_name, qty, mark):
+  def change_count_build(cls,build_name, qty, mark):
     """Метод меняет кол-во построек в хранилище,
        если mark = + увеличиваем кол-во построе
        иначе уменьшаем кол-во построек"""
