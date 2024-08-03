@@ -7,7 +7,7 @@ class Printer:
   """Класс для печати разделов меню"""
   def __init__ (self):
     self.menu_objects = json_loader('object/menu.json')
-    # self.type_menu = {'1':'main','2':'build','3':'trade','4':'army','5':'food','6':'taxes',}
+    # self.type_menu = {'1':'main','2':'build','3':'trade','4':'army','5':'food','6':'taxes'}
 
   def menu (self, name: str):
       """Метод печатает меню"""
@@ -34,7 +34,6 @@ class ControlManager:
     Printer.menu_cls('main')
 
     num = input_validate('menu')
-
     try:
       actions_main[num]()
     except:
@@ -49,13 +48,10 @@ class ControlManager:
     num = input_validate('menu')
     
     try:
-      print('*********Запуск строительства**********')
       actions_build[num]()
     except:
-      print("Invalid selection, please try again(*).\n")
-      cls.print_build_menu()
-      
-  
+       print("Invalid selection, please try again(*).\n")
+       cls.print_build_menu()
 
   @classmethod
   def print_trade_menu(cls):
@@ -108,25 +104,22 @@ class Builder:
     build_count_price_float = cls.calc_cost_build(build_name,qty_farm)
 
     if build_count_price_float<=Treasury.current_gold():# если деняк в казне хватает
-        print('*********Проверка стоимости**********')
-        # то увеличиваем кол-во ферм
-        print(param.get(build_name).get('count_int'))
-        cls.chang_count_build(build_name,qty_farm,'+')
-        print(param.get(build_name).get('count_int'))
-        print('*********Проверка стоимости_1**********')
-        # списываем деньги за успешное строительство фермы
-        Treasury.write_off_gold(build_count_price_float)
-        
-        print('*********Проверка стоимости_2**********')
-        print(f'Вы построили {qty_farm} ферм')
-        print('*********Проверка стоимости_3**********')
-        Printer.menu_cls('build')
+
+      # то увеличиваем кол-во ферм
+      cls.change_count_build(build_name,qty_farm,'+')
+
+      # списываем деньги за успешное строительство фермы
+      Treasury.write_off_gold(build_count_price_float)
+      
+      print(f'Вы построили {qty_farm} ферм')
+      ControlManager.print_build_menu()
 
     else:
-        # Уведомление, что нехватает денег
-        print('*********Провалили проверку на стоимость**********')
-        Informer.no_gold()
-        Printer.menu_cls('build')
+      # Уведомление, что нехватает денег
+      Informer.no_gold()
+      #Printer.menu_cls('build')
+      ControlManager.print_build_menu()
+
       
 
   @classmethod
@@ -135,7 +128,7 @@ class Builder:
     return float(qty) * param.get(build_name).get('price_float')
 
   @classmethod
-  def chang_count_build(cls,build_name, qty, mark):
+  def change_count_build(cls,build_name, qty, mark):
     """Метод меняет кол-во построек в хранилище,
        если mark = + увеличиваем кол-во построе
        иначе уменьшаем кол-во построек"""
@@ -154,7 +147,8 @@ actions_main = {'1':'Экшен с окончание хода',
                 '3':ControlManager.print_trade_menu,}
 
 actions_build = {'1': Builder.farm,
-                 '2':'Builder.market'}
+                 '2':'Builder.market',
+                 '0':ControlManager.print_main_menu}
 ################################################################################################
 
 
