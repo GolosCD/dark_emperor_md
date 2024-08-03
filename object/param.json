@@ -1,33 +1,33 @@
 {
 "farm": {"count_int": 0,
-         "price_float": 1000.00,
+         "price_float": 1000,
          "product_per_one_float": 500},
 
   "market": {"count_int": 0,
-             "price_float": 2000.00,
+             "price_float": 2000,
              "product_per_one_float": 200},
 
   "mine": {"count_int": 0,
-          "price_float": 3000.00,
+          "price_float": 3000,
           "product_per_one_float": 1.9},
 
   "blacksmith": {"count_int": 0,
-                  "price_float": 3000.00,
-                  "product_per_one_float": 1.9},
+                  "price_float": 3000,
+                  "product_per_one_float": 8},
 
   "castl": {"count_int": 0,
-          "price_float": 5000.00,
-          "product_per_one_float": 1.9},
+          "price_float": 5000,
+          "product_per_one_float": 0},
 
-  "user_resurce": {"food_int": 1700,
-                  "villager_int": 750,
-                  "gold_float": 1500.00,
-                  "taxes": 0.5},
+  "kingdom": {"food": 1700,
+             "villager": 750,
+             "gold": 1500,
+             "taxes": 0.5},
 
   "year": {"count_int": 1,
           "calendar_year_int": 1388,
           "harvest_ratio_float": 0.78,
-          "year_price_food_float":85.0},
+          "year_price_food_float":85},
 
-  "price":{"food_float": 85.0}
+  "price":{"food_float": 85}
  }

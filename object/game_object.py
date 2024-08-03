@@ -11,7 +11,7 @@
 class ConstructionObject:
   """Класс для хранения информации о постройке"""
   
-  def __init__(self, name: str, count: int, price: float, product_per_one: int):
+  def __init__(self, name: str, count: int, price: int, product_per_one: int):
     self.name = name
     self.__count = count
     self.__price = price
@@ -48,3 +48,26 @@ class ConstructionObject:
     max_count = int(gold_in_treasury / self.get_current_price())
     
     print(f'Максимальное кол-во построек, которое можно построить: {max_count}')
+
+
+# Класс для казны королвества (Произосится как Трежери)
+class Treasury:
+  """Казна королевства"""
+  
+  def __init__ (self,gold_default: int):
+    self.__gold = gold_default
+    
+  def get_current_gold(self):
+    """Метод возвращает текущее кол-во золота в казне королевства"""
+    
+    return self.__gold
+
+  def add_gold(self, price: int):
+    """Метод записывает указанную сумму в казну королевства"""
+
+    self.__gold += price
+
+  def remove_gold(self, price: int):
+    """Метод списывает указанную сумму из казны королевства"""
+    
+    self.__gold -= price
