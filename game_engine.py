@@ -6,11 +6,11 @@ param = json_loader('object/param.json')
 
 #Инициализация экземпляров
 #Постройки
-farm = ConstructionObject('farm', *param['farm'].values())
-market = ConstructionObject('market', *param['market'].values())
-mine = ConstructionObject('mine', *param['mine'].values())
+farm       = ConstructionObject('farm', *param['farm'].values())
+market     = ConstructionObject('market', *param['market'].values())
+mine       = ConstructionObject('mine', *param['mine'].values())
 blacksmith = ConstructionObject('blacksmith', *param['blacksmith'].values())
-castl = ConstructionObject('castl', *param['castl'].values())
+castl      = ConstructionObject('castl', *param['castl'].values())
 #Казна
 treasury = Treasury(param.get('kingdom').get('gold'))
 # Уведомлялка
@@ -20,6 +20,22 @@ printer = Printer(json_loader('object/menu.json'))
 
 
 class ControlManager:
+
+  @classmethod
+  def start_game(cls):
+    """Метод запускает начало игру (тут все начинается)"""
+
+    printer.welcome()
+
+    printer.menu('main')
+
+    num = input_validate('menu')
+
+    try:
+      actions_main[num]()
+    except KeyError:
+      print("Invalid selection, please try again.\n")
+      cls.print_main_menu()
 
   @classmethod
   def print_main_menu(cls):  # и печать основного меню и начало игры
@@ -48,6 +64,11 @@ class ControlManager:
       cls.print_build_menu()
 
   @classmethod
+  def back(cls):
+    cls.print_build_menu()
+    
+
+  @classmethod
   def print_trade_menu(cls):
     printer.menu('trade')
 
@@ -57,13 +78,8 @@ class Builder:
   @classmethod
   def create_build(cls, obj: ConstructionObject):
     """Метод постройки фермы"""
-    build_name = obj.name
 
     # просим ввести кол-во ферм к постройке
-    print(
-        f'Тут будет инфа о текущем кол-ве ферм, стоимость 1 фермы, текущее золото, и макс. кол-во к постройке'
-    )
-
     qty_farm = input_validate('build')
 
     # Считаем общую стоимость требуемых построек
@@ -73,7 +89,6 @@ class Builder:
 
       # то увеличиваем кол-во ферм
       farm.add_count_build(qty_farm)
-      # cls.change_count_build(build_name,qty_farm,'+')
 
       # списываем деньги за успешное строительство фермы
       treasury.remove_gold(total_price)

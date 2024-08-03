@@ -1,3 +1,5 @@
+from object.game_text import *
+
 """Модуль хранит классы для игры
 Классы содержат методы в основном они делятся на три категории:
  get_ - методы что-то возращают;
@@ -94,3 +96,10 @@ class Printer:
 
     for num, name_line in self.menu_objects.get(name).items():
       print(f'{num} - {name_line}')
+    print()
+
+  def welcome(self):
+    """Метод печатает приветственное сообщение"""
+    print(welcome,'\n')
+    input('Нажмите Enter для продолжения')
+    print()
