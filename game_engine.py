@@ -1,18 +1,21 @@
 from object.game_func import *
 from object.game_object import *
+import sys
 
-#загружаем параметры игры
-param = json_loader('object/param.json')
+# загружаем параметры игры
+settings = json_loader('object/settings.json')
 
-#Инициализация экземпляров
-#Постройки
-farm       = ConstructionObject('farm', *param['farm'].values())
-market     = ConstructionObject('market', *param['market'].values())
-mine       = ConstructionObject('mine', *param['mine'].values())
-blacksmith = ConstructionObject('blacksmith', *param['blacksmith'].values())
-castl      = ConstructionObject('castl', *param['castl'].values())
-#Казна
-treasury = Treasury(param.get('kingdom').get('gold'))
+# Инициализация экземпляров
+# Постройки
+farm       = Build('farm', *settings['farm'].values())
+market     = Build('market', *settings['market'].values())
+mine       = Build('mine', *settings['mine'].values())
+blacksmith = Build('blacksmith', *settings['blacksmith'].values())
+castl      = Build('castl', *settings['castl'].values())
+# Словарь с экземплярами построек, для дальнейшей передачи в функцию строительства
+object_for_build = {'1':farm, '2':market, '3':mine, '4':blacksmith, '5':castl}
+# Казна
+treasury = Treasury(settings.get('kingdom').get('gold'))
 # Уведомлялка
 info = Informer()
 # Принтер
@@ -65,23 +68,17 @@ class ControlManager:
     """Метод печатает пункты строительного меню
        и приглашение к выбору типа постройки"""
 
-    # словарь с экземпллярами, для дальнейшей передачи в функцию строительства
-    object_for_build = {
-                        '1':farm,
-                        '2':market,
-                        '3':mine,
-                        '4':blacksmith,
-                        '5':castl
-                       }
-
     # печать пунктов строительного меню
     printer.menu('build')
      # приглашение к выбору пункта меню
     num = input_validate('menu')
 
     try:
-      # выбор экшен функции
-      build_actions['1'](object_for_build[num])
+      if num in object_for_build:
+        # выбор экшен функции
+        build_actions[num](object_for_build[num])
+      elif num =='0':
+        build_actions[num]() # если 0, то возвращаемся назад из строительного меню
     except KeyError:
       #  Уведомление о том, что криво выбран пункт меню
       printer.incorrect_key()
@@ -92,7 +89,7 @@ class ControlManager:
   def back_to_main(cls):
     """Метод просто возвращается в основное меню"""
     
-    cls.print_build_menu()
+    cls.print_main_menu()
 
   @classmethod
   def print_trade_menu(cls):
@@ -100,7 +97,7 @@ class ControlManager:
      и приглашение к выбору пункта меню"""
     
     # печать пунктов торгового меню
-    printer.menu('build')
+    printer.menu('trade')
      # приглашение к выбору пункта меню
     num = input_validate('menu')
 
@@ -110,15 +107,90 @@ class ControlManager:
     except KeyError:
       #  Уведомление о том, что криво выбран пункт меню
       printer.incorrect_key()
-      # Повторный вызов строительного меню
+      # Повторный вызов торгового меню
       cls.print_build_menu()
 
+  @classmethod
+  def print_food_menu(cls):
+    """Метод печатате пункты торгового меню
+       и приглашение к выбору пункта меню"""
+
+    # печать пунктов меню распределение еды
+    printer.menu('food')
+    # приглашение к выбору распределения кол-ва еды
+    num = input_validate('menu')
+
+    try:
+      # выбор экшен функции
+      food_actions[num]()
+    except:
+      #  Уведомление о том, что криво выбран пункт меню
+      printer.incorrect_key()
+      # Повторный вызов меню распределения еды
+      cls.print_food_menu()
+
+  @classmethod
+  def print_taxes_menu(cls):
+    """Метод печатате пункты налогового меню
+       и приглашение к выбору пункта меню"""
+
+    # печать пунктов налогового меню
+    printer.menu('taxes')
+    # приглашение к выбору уровня налогов
+    num = input_validate('menu')
+
+    try:
+      # выбор экшен функции
+      taxes_actions[num]()
+    except:
+      #  Уведомление о том, что криво выбран пункт меню
+      printer.incorrect_key()
+      # Повторный вызов меню налогового меню
+      cls.print_taxes_menu()
+
+  @classmethod
+  def print_end_round_menu(cls):
+    """Метод печатате пункты меню завершения хода
+       и приглашение к выбору пункта меню"""
+
+    # печать пунктов меню завершения хода
+    printer.menu('end_round')
+    # приглашение к выбору пункта
+    num = input_validate('menu')
+
+    try:
+      # выбор экшен функции
+      end_round_actions[num]()
+    except:
+      #  Уведомление о том, что криво выбран пункт меню
+      printer.incorrect_key()
+      # Повторный вызов меню завершения хода
+      cls.print_end_round_menu()
+
+  @classmethod
+  def print_end_game_menu(cls):
+    """Метод печатате пункты налогового меню
+       и приглашение к выбору пункта меню"""
+
+    # печать пунктов налогового меню
+    printer.menu('end_game')
+    # приглашение к выбору уровня налогов
+    num = input_validate('menu')
+
+    try:
+      # выбор экшен функции
+      end_game_actions[num]()
+    except:
+      #  Уведомление о том, что криво выбран пункт меню
+      printer.incorrect_key()
+      # Повторный вызов меню налогового меню
+      cls.print_end_game_menu()
 
 
 class Builder:
 
   @classmethod
-  def create_build(cls, obj: ConstructionObject):
+  def create_build(cls, obj: Build):
     """Метод постройки фермы"""
 
     # просим ввести кол-во ферм к постройке
@@ -135,31 +207,35 @@ class Builder:
       # списываем деньги за успешное строительство фермы
       treasury.remove_gold(total_price)
 
-      print(f'Вы построили {qty_obj} выбранных объектов')
-      ControlManager.print_build_menu()
+      print(f'Вы построили {qty_obj} шт. выбранных объектов','\n')
 
     else:
       # Уведомление, что нехватает денег
       info.no_gold()
-      #Printer.menu('build')
-      ControlManager.print_build_menu()
+      
+    #По окончанию строительных работ, вызывается меню строительства
+    ControlManager.print_build_menu()
 
 
 #######_ЭКШОНЧИКИ_#############################
 main_actions = {
-    '1': lambda: print('Функция окончания года не доступна','\n'),
+    '1': ControlManager.print_end_round_menu,
     '2': ControlManager.print_build_menu,
     '3': ControlManager.print_trade_menu,
     '4': lambda: print('Функция наема армии не доступна','\n'),
-    '5': lambda: print('Функция распределения пищи не доступна','\n'),
-    '6': lambda: print('Функция управления налогами не доступна','\n'),
+    '5': ControlManager.print_food_menu,
+    '6': ControlManager.print_taxes_menu,
     '7': lambda: print('Функция советника не доступна','\n'),
     '8': lambda: print('Функция печати отчета не доступна','\n'),
-    '9': lambda: print('Функция управления игрой не доступна','\n'),
+    '9': ControlManager.print_end_game_menu,
 }
 
 build_actions = {
     '1': Builder.create_build,
+    '2': Builder.create_build,
+    '3': Builder.create_build,
+    '4': Builder.create_build,
+    '5': Builder.create_build,
     '0': ControlManager.back_to_main
 }
 
@@ -189,17 +265,22 @@ taxes_actions = {
 }
 
 consultant_actions = {
-    '1': lambda: print('Услуги советника недоступны','\n'),
+    '1': lambda: print('Услуги советника не доступны','\n'),
     '0': ControlManager.back_to_main
 }
 
 report_actions = {
-    '1': lambda: print('Услуга печати отчета недоступна','\n'),
+    '1': lambda: print('Услуга печати отчета не доступна','\n'),
     '0': ControlManager.back_to_main
 }
 
-end_actions = {
-    '1': lambda: print('Запуск остановки игры недоступна','\n'),
+end_game_actions = {
+    '1': sys.exit,
     '0': ControlManager.back_to_main
 }
+end_round_actions = {
+    '1': lambda: print('Функция завершения года не доступна','\n'),
+    '0': ControlManager.back_to_main
+}
+
 ################################################

@@ -9,8 +9,8 @@ from object.game_text import *
  revome_ - методы что-то уменьшают;
 """
 
-# Класс для строительства разных объектов (ферм/кузниц/шахт)
-class ConstructionObject:
+# Класс "Здание" - для управления зданиями в игре
+class Build:
   """Класс для хранения информации о постройке"""
   
   def __init__(self, name: str, count: int, price: int, product_per_one: int):
@@ -49,7 +49,7 @@ class ConstructionObject:
     
     max_count = int(gold_in_treasury / self.get_current_price())
     
-    print(f'Максимальное кол-во построек, которое можно построить: {max_count}')
+    print(f'Максимальное кол-во построек, которое можно построить: {max_count}','\n')
 
 
 # Класс для казны королвества (Произосится как Трежери)
@@ -75,7 +75,7 @@ class Treasury:
     self.__gold -= price
 
 
-# Информер
+# Информер - игровая уведомлялка
 class Informer:  
   """Класс хранит реакции на различные игровые события"""
 
