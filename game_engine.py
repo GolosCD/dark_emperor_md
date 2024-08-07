@@ -1,6 +1,8 @@
 from object.game_func import *
 from object.game_object import *
 import sys
+import subprocess # Проверь меня
+
 
 # загружаем параметры игры
 settings = json_loader('object/settings.json')
@@ -27,14 +29,16 @@ class ControlManager:
   @classmethod
   def start_game(cls):
     """Метод запускает начало игры (тут все начинается)"""
-
+    
+    subprocess.run('clear', shell=True) # Проверь меня
     # печать приветственного сообщения
     printer.welcome()
     # печать пунктов основного меню
     printer.menu('main')
     # приглашение к выбору пункта меню
     num = input_validate('menu')
-
+    
+    
     try:
       # выбор экшен функции
       main_actions[num]()
@@ -43,12 +47,13 @@ class ControlManager:
       printer.incorrect_key()
       # Повторный вызов основного меню
       cls.print_main_menu()
+    
 
   @classmethod
   def print_main_menu(cls):
     """Метод печатает пункты основного меню 
        и приглашение к выбору пункта меню"""
-
+    
     # печать пунктов основного меню
     printer.menu('main')
     # приглашение к выбору пункта меню
@@ -79,6 +84,8 @@ class ControlManager:
         build_actions[num](object_for_build[num])
       elif num =='0':
         build_actions[num]() # если 0, то возвращаемся назад из строительного меню
+      else:
+        raise KeyError()
     except KeyError:
       #  Уведомление о том, что криво выбран пункт меню
       printer.incorrect_key()
@@ -278,6 +285,7 @@ end_game_actions = {
     '1': sys.exit,
     '0': ControlManager.back_to_main
 }
+
 end_round_actions = {
     '1': lambda: print('Функция завершения года не доступна','\n'),
     '0': ControlManager.back_to_main

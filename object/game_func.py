@@ -22,7 +22,7 @@ def input_validate(type_input: str) -> str|int:
         # приглашаем пользователя к вводу данных
         input_num = input(f'{answer_dict.get(type_input)}')
         print()
-
+        
         if input_num.isdigit():
             if type_input == 'menu':
                 return input_num  # для menu вернем str

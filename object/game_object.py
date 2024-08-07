@@ -47,7 +47,7 @@ class Build:
   def print_max_count(self, gold_in_treasury: int):
     """Метод печатает максимальное кол-во построек, которое можно построить"""
     
-    max_count = int(gold_in_treasury / self.get_current_price())
+    max_count = gold_in_treasury // self.get_current_price()
     
     print(f'Максимальное кол-во построек, которое можно построить: {max_count}','\n')
 
@@ -90,12 +90,12 @@ class Printer:
   """Класс для печати игровых меню и текста"""
   
   def __init__(self, json_menu: dict):
-    self.menu_objects = json_menu
+    self.__menu_objects = json_menu
 
   def menu(self, name: str):
     """Метод печатает меню"""
 
-    for num, name_line in self.menu_objects.get(name).items():
+    for num, name_line in self.__menu_objects.get(name).items():
       print(f'{num} - {name_line}')
     print()
 
