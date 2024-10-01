@@ -17,12 +17,38 @@ castl      = Build('castl', *settings['castl'].values())
 # Словарь с экземплярами построек, для дальнейшей передачи в функцию строительства
 object_for_build = {'1':farm, '2':market, '3':mine, '4':blacksmith, '5':castl}
 # Казна
-treasury = Treasury(settings.get('kingdom').get('gold'))
+treasury = Kingdom(settings.get('kingdom').get('gold'))
+# Жители
+villager = Kingdom(settings.get('kingdom').get('villager'))
+# Армия
+army = Kingdom(settings.get('kingdom').get('army'))
 # Уведомлялка
 info = Informer()
 # Принтер
 printer = Printer(json_loader('object/menu.json'))
+# Рацион
+ration = Ration(settings['ration'])
+# Налоги
+taxes = Taxes(settings['taxes'])
 
+# Пщеница
+food = Resource('Пщеница', 
+                 settings.get('resources').get('food'),
+                 settings.get('price_sale').get('food'))
+# Железная руда
+iron_ore = Resource("Железная руда",
+                     settings.get('resources').get('iron_ore'),
+                     settings.get('price_sale').get('iron_ore'))
+# Оружие
+weapen = Resource("Оружие",
+                   settings.get('resources').get('weapon'),
+                   settings.get('price_sale').get('weapon'))
+
+
+#Игровой год
+year = Year(settings.get('year').get('game_year'),
+            settings.get('year').get('end_year'),
+            settings.get('year').get('harvest_key'))
 
 class ControlManager:
 
@@ -115,26 +141,27 @@ class ControlManager:
       #  Уведомление о том, что криво выбран пункт меню
       printer.incorrect_key()
       # Повторный вызов торгового меню
-      cls.print_build_menu()
+      cls.print_trade_menu()
 
   @classmethod
-  def print_food_menu(cls):
+  def print_ration_menu(cls):
     """Метод печатате пункты торгового меню
        и приглашение к выбору пункта меню"""
 
     # печать пунктов меню распределение еды
-    printer.menu('food')
+    printer.menu('ration')
     # приглашение к выбору распределения кол-ва еды
     num = input_validate('menu')
 
     try:
       # выбор экшен функции
-      food_actions[num]()
+      ration_actions[num](num)
+      print(ration.get_k_ration())
     except:
       #  Уведомление о том, что криво выбран пункт меню
       printer.incorrect_key()
       # Повторный вызов меню распределения еды
-      cls.print_food_menu()
+      cls.print_ration_menu()
 
   @classmethod
   def print_taxes_menu(cls):
@@ -148,7 +175,7 @@ class ControlManager:
 
     try:
       # выбор экшен функции
-      taxes_actions[num]()
+      taxes_actions[num](num)
     except:
       #  Уведомление о том, что криво выбран пункт меню
       printer.incorrect_key()
@@ -174,6 +201,31 @@ class ControlManager:
       # Повторный вызов меню завершения хода
       cls.print_end_round_menu()
 
+####################----------#########################
+
+# пока тут отчетная дичь для проверки обьектов разных классов
+  @classmethod
+  def print_report_menu(cls):
+    """Метод распечатки отчета"""
+    
+    print('Отчет')
+    print('Сейчас какой-то год от какого-то события')
+    print()
+    print(gold, food, villager, iron_ore, weapen, army, sep='\n')
+    print()
+    print(*object_for_build.values(), sep='\n')
+    
+
+    print()
+    printer.menu('report')
+
+    while True:
+      num = input_validate('menu')
+      if num == '0':
+        cls.print_main_menu()
+
+#########################-----------#########################  
+  
   @classmethod
   def print_end_game_menu(cls):
     """Метод печатате пункты налогового меню
@@ -206,13 +258,13 @@ class Builder:
     # Считаем общую стоимость требуемых построек
     total_price = obj.get_current_price() * qty_obj
 
-    if total_price <= treasury.get_current_gold():  # если деняк в казне хватает
+    if total_price <= treasury.get_count():  # если деняк в казне хватает
 
       # то увеличиваем кол-во ферм
       farm.add_count_build(qty_obj)
 
       # списываем деньги за успешное строительство фермы
-      treasury.remove_gold(total_price)
+      treasury.remove(total_price)
 
       print(f'Вы построили {qty_obj} шт. выбранных объектов','\n')
 
@@ -230,10 +282,10 @@ main_actions = {
     '2': ControlManager.print_build_menu,
     '3': ControlManager.print_trade_menu,
     '4': lambda: print('Функция наема армии не доступна','\n'),
-    '5': ControlManager.print_food_menu,
+    '5': ControlManager.print_ration_menu,
     '6': ControlManager.print_taxes_menu,
     '7': lambda: print('Функция советника не доступна','\n'),
-    '8': lambda: print('Функция печати отчета не доступна','\n'),
+    '8': ControlManager.print_report_menu,
     '9': ControlManager.print_end_game_menu,
 }
 
@@ -253,21 +305,21 @@ trade_actions = {
     '0': ControlManager.back_to_main
 }
 
-food_actions = {
-    '1': lambda: print('Распределление очень малого кол-ва еды не доступна','\n'),
-    '2': lambda: print('Распределление малого кол-ва еды не доступна','\n'),
-    '3': lambda: print('Распределление среднего кол-ва еды не доступна','\n'),
-    '4': lambda: print('Распределление большого кол-ва еды не доступна','\n'),
-    '5': lambda: print('Распределление очень большого кол-ва еды не доступна','\n'),
+ration_actions = {
+    '1': ration.set_k_ration,
+    '2': ration.set_k_ration,
+    '3': ration.set_k_ration,
+    '4': ration.set_k_ration,
+    '5': ration.set_k_ration,
     '0': ControlManager.back_to_main
 }
 
 taxes_actions = {
-    '1': lambda: print('Установка очень низких налогов не доступна','\n'),
-    '2': lambda: print('Установка низких налогов не доступна','\n'),
-    '3': lambda: print('Установка средних налогов не доступна','\n'),
-    '4': lambda: print('Установка высоких налогов не доступна','\n'),
-    '5': lambda: print('Установка очень высоких налогов не доступна','\n'),
+    '1': taxes.set_k_taxes,
+    '2': taxes.set_k_taxes,
+    '3': taxes.set_k_taxes,
+    '4': taxes.set_k_taxes,
+    '5': taxes.set_k_taxes,
     '0': ControlManager.back_to_main
 }
 
