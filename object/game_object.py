@@ -141,7 +141,7 @@ class Taxes:
     """Метод возвращает кол-во налогов которое будет получено с жителей в конце года
     Т.е. столько надо будет прибавить в казну королевства"""
 
-    return int(count_villagers * self.get_k_tax())
+    return int(count_villagers * self.get_k_taxes())
 
 
 # Класс для казны королвества (Произосится как Трежери)
@@ -228,24 +228,24 @@ class Year:
 
 class Harvest:
 
-  def __init__(self, harvest_key: str, harvest_ratio: dict,
+  def __init__(self, harvest_key: str, harvest_interval: dict,
                price_modificator: dict):
     self.__harvest_key = harvest_key
-    self.__harvest_ratio = harvest_ratio
+    self.__harvest_interval = harvest_interval
+    self.__harvest_ratio = 1.0
     self.__price_modificator = price_modificator
 
   def get_ratio(self) -> float:
     """Метод возвращает коэффициент урожая"""
-    a, b = self.__harvest_ratio.get(self.__harvest_key)
 
-    return r.randint(a, b)
+    return self.__harvest_ratio
 
   def get_price_modificator(self) -> float:
     """Метод возвращает коэффициент цены"""
-
+    
     return self.__price_modificator.get(self.__harvest_key)
 
-  def calc_harvest_key(self):
+  def calc_harvest_ratio(self):
     """Метод пересчитывает урожайность"""
 
     # тип урожая
@@ -258,14 +258,15 @@ class Harvest:
     self.__harvest_key = r.choice(harvest_type)\
       + '_' + r.choice(harvest_quality)
 
-
+    self.__harvest_ratio = r.uniform(*(self.__harvest_interval.get(self.__harvest_key))) * 100
+    
 class Price:
   """Класс для хранения цен на ресурсы"""
 
-  def __init__(self):
-    self.__price_food = None
-    self.__price_iron_ore = None
-    self.__price_weapon = None
+  def __init__(self, dict_price_sale: dict):
+    self.__price_food = dict_price_sale.get('food')
+    self.__price_iron_ore = dict_price_sale.get('iron_ore')
+    self.__price_weapon = dict_price_sale.get('weapon')
 
   def get_price_food(self):
 
@@ -279,15 +280,6 @@ class Price:
 
     return self.__price_weapon
 
-  def cal_price_iron_ore(self):
-    """Метод рассчитывает цену за ед. железной руды"""
-
-    self.__price_iron_ore = 18
-
-  def cal_price_weapon(self):
-    """Метод рассчитывает цену за ед. оружия"""
-
-    self.__price_weapon = 35
 
   def cal_price_food(self, harvest: Harvest):
     """Метод рассчитывает цену за ед. еды"""
@@ -298,4 +290,9 @@ class Price:
     min_price = 20  # минимальная цена
     koef_harvest = (min_harvest - max_price) / (max_harvest - min_price)
     free_member = max_price + (koef_harvest * -1 * min_price)
-    first_price = (Harvest.harvest_ratio() * koef_harvest) + free_member
+    first_price = (harvest.get_ratio() * koef_harvest) + free_member
+    result_price = round(first_price * (1 - harvest.get_price_modificator()))
+    
+    self.__price_food = result_price
+    
+    

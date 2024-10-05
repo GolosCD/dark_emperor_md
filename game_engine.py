@@ -47,8 +47,13 @@ weapen = Resource("Оружие",
 
 #Игровой год
 year = Year(settings.get('year').get('game_year'),
-            settings.get('year').get('end_year'),
-            settings.get('year').get('harvest_key'))
+            settings.get('year').get('end_year'))
+
+harvest = Harvest(settings.get('year').get('harvest_key'),
+                  settings.get('harvest_interval'),
+                  settings.get('price_modificator'))
+
+price = Price(settings.get('price_sale'))
 
 class ControlManager:
 
@@ -192,6 +197,18 @@ class ControlManager:
     # приглашение к выбору пункта
     num = input_validate('menu')
 
+    print('------Тестирование--------')
+    print('Тестирование пересчета процента урожайности:', harvest.get_ratio())
+    print('Тестирование пересчета цены пшеницы:', price.get_price_food())
+    print('Тестирование прибавки года в конце игры:', year.game_year)
+    print('------Тестирование. Результаты после пересчета--------')
+    harvest.calc_harvest_ratio()
+    price.cal_price_food(harvest)
+    year.new_year()
+    print('Тестирование пересчета процента урожайности:', harvest.get_ratio())
+    print('Тестирование пересчета цены пшеницы:', price.get_price_food())
+    print('Тестирование прибавки года в конце игры:', year.game_year)
+    
     try:
       # выбор экшен функции
       end_round_actions[num]()
@@ -224,7 +241,7 @@ class ControlManager:
       if num == '0':
         cls.print_main_menu()
 
-#########################-----------#########################  
+
   
   @classmethod
   def print_end_game_menu(cls):
